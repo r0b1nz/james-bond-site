@@ -46,7 +46,7 @@
 
     .media-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Adjusted for 4 tiles */
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
       gap: 30px;
       max-width: 95%;
       margin: 30px auto;
@@ -148,17 +148,17 @@
       }
     }
 
-    /* Ensure videos don't go full-screen on mobile */
     @media screen and (max-width: 768px) {
       .media-container {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       }
       .media-tile {
-        max-width: 400px; /* Slightly smaller on mobile for better fit */
+        max-width: 400px;
         max-height: 350px;
       }
       .media-tile img, .media-tile video {
         height: 300px;
+        object-fit: cover;
       }
       .tile-quote {
         font-size: 0.9rem;
@@ -173,7 +173,6 @@
     <div class="subheading">a.k.a. Vijay Kataria</div>
   </header>
   <div class="media-container" id="media-container">
-    <div class="media-tile"><div class="loader" style="display:none;"></div></div>
     <div class="media-tile"><div class="loader" style="display:none;"></div></div>
     <div class="media-tile"><div class="loader" style="display:none;"></div></div>
     <div class="media-tile"><div class="loader" style="display:none;"></div></div>
@@ -217,7 +216,7 @@
     ];
 
     let index = 0;
-    const tilesCount = 4; // Updated to 4 tiles
+    const tilesCount = 3; // Reverted to 3 tiles
 
     const mediaContainer = document.getElementById('media-container');
 
@@ -257,9 +256,9 @@
         } else if (current.type === 'video') {
           const video = document.createElement('video');
           video.src = current.src;
-          video.setAttribute('playsinline', ''); // Ensure inline playback
-          video.setAttribute('webkit-playsinline', ''); // iOS compatibility
-          video.autoplay = false; // Disable autoplay initially
+          video.setAttribute('playsinline', '');
+          video.setAttribute('webkit-playsinline', '');
+          video.autoplay = false;
           video.muted = false;
           video.load();
           video.oncanplay = () => {
@@ -269,12 +268,10 @@
             quote.className = 'tile-quote';
             quote.innerText = current.quote;
             tile.appendChild(quote);
-            // Play video only if not on mobile to prevent full-screen
             if (!/Mobi|Android/i.test(navigator.userAgent)) {
               video.play();
             }
           };
-          // Allow manual play on click for mobile
           video.addEventListener('click', () => {
             if (video.paused) {
               video.play();
