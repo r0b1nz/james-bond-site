@@ -22,7 +22,7 @@
       justify-content: flex-start;
       min-height: 100vh;
       overflow-x: hidden;
-      padding-bottom: 60px; /* Increased padding for larger content */
+      padding-bottom: 60px;
     }
 
     header {
@@ -32,7 +32,7 @@
 
     h1 {
       font-family: 'Playfair Display', serif;
-      font-size: 3.5rem; /* Slightly larger header for balance */
+      font-size: 3.5rem;
       font-style: italic;
       font-weight: 700;
     }
@@ -46,7 +46,7 @@
 
     .media-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Adjusted for larger tiles */
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Adjusted for 4 tiles */
       gap: 30px;
       max-width: 95%;
       margin: 30px auto;
@@ -55,8 +55,8 @@
 
     .media-tile {
       position: relative;
-      max-width: 600px; /* Significantly larger tiles */
-      max-height: 450px; /* Increased to accommodate larger media and quote */
+      max-width: 600px;
+      max-height: 450px;
       border-radius: 20px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.25);
       overflow: hidden;
@@ -70,7 +70,7 @@
 
     .media-tile img, .media-tile video {
       width: 100%;
-      height: 400px; /* Larger media height */
+      height: 400px;
       object-fit: cover;
       border-radius: 20px 20px 0 0;
     }
@@ -80,7 +80,7 @@
     }
 
     .tile-quote {
-      font-size: 1.1rem; /* Slightly larger font for readability */
+      font-size: 1.1rem;
       font-style: italic;
       color: #444;
       text-align: center;
@@ -97,7 +97,7 @@
       background: black;
       color: white;
       border: none;
-      font-size: 1.2rem; /* Slightly larger button text */
+      font-size: 1.2rem;
       padding: 12px 24px;
       border-radius: 30px;
       cursor: pointer;
@@ -147,6 +147,24 @@
         transform: translate(var(--drift-x), -20px);
       }
     }
+
+    /* Ensure videos don't go full-screen on mobile */
+    @media screen and (max-width: 768px) {
+      .media-container {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      }
+      .media-tile {
+        max-width: 400px; /* Slightly smaller on mobile for better fit */
+        max-height: 350px;
+      }
+      .media-tile img, .media-tile video {
+        height: 300px;
+      }
+      .tile-quote {
+        font-size: 0.9rem;
+        padding: 10px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -155,6 +173,7 @@
     <div class="subheading">a.k.a. Vijay Kataria</div>
   </header>
   <div class="media-container" id="media-container">
+    <div class="media-tile"><div class="loader" style="display:none;"></div></div>
     <div class="media-tile"><div class="loader" style="display:none;"></div></div>
     <div class="media-tile"><div class="loader" style="display:none;"></div></div>
     <div class="media-tile"><div class="loader" style="display:none;"></div></div>
@@ -197,9 +216,8 @@
       { type: 'video', src: '/media/v4.mp4', quote: '' },
     ];
 
-
     let index = 0;
-    const tilesCount = 3;
+    const tilesCount = 4; // Updated to 4 tiles
 
     const mediaContainer = document.getElementById('media-container');
 
@@ -239,9 +257,10 @@
         } else if (current.type === 'video') {
           const video = document.createElement('video');
           video.src = current.src;
-          video.autoplay = true;
+          video.setAttribute('playsinline', ''); // Ensure inline playback
+          video.setAttribute('webkit-playsinline', ''); // iOS compatibility
+          video.autoplay = false; // Disable autoplay initially
           video.muted = false;
-          video.playsinline = true;
           video.load();
           video.oncanplay = () => {
             tile.innerHTML = '';
@@ -250,8 +269,19 @@
             quote.className = 'tile-quote';
             quote.innerText = current.quote;
             tile.appendChild(quote);
-            video.play();
+            // Play video only if not on mobile to prevent full-screen
+            if (!/Mobi|Android/i.test(navigator.userAgent)) {
+              video.play();
+            }
           };
+          // Allow manual play on click for mobile
+          video.addEventListener('click', () => {
+            if (video.paused) {
+              video.play();
+            } else {
+              video.pause();
+            }
+          });
         }
       }
 
