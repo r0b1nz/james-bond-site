@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>James Bond</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 40px;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px 10px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    .subheading {
+      font-size: 1rem;
+      font-style: italic;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .media-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      max-width: 95%;
+      margin: 20px auto;
+      justify-items: center;
+    }
+
+    .media-tile {
+      position: relative;
+      max-width: 400px; /* Increased size */
+      max-height: 350px; /* Increased size, adjusted to include quote */
+      border-radius: 15px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      animation: float 4s ease-in-out infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fff; /* White background for quote area */
+    }
+
+    .media-tile img, .media-tile video {
+      width: 100%;
+      height: 250px; /* Fixed height for media to accommodate quote */
+      object-fit: cover;
+      border-radius: 15px 15px 0 0; /* Rounded top corners only */
+    }
+
+    .media-tile:hover {
+      transform: scale(1.05) translateY(-5px);
+    }
+
+    .tile-quote {
+      font-size: 0.9rem;
+      font-style: italic;
+      color: #444;
+      text-align: center;
+      padding: 10px;
+      width: 100%;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .next-button {
+      background: black;
+      color: white;
+      border: none;
+      font-size: 1rem;
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-bottom: 20px;
+    }
+
+    .next-button:hover {
+      background: #444;
+    }
+
+    .loader {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #000;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .spark {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      animation: fadeOut 1.5s ease-in-out forwards;
+    }
+
+    @keyframes fadeOut {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--drift-x), -20px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>James Bond</h1>
+    <div class="subheading">a.k.a. Vijay Kataria</div>
+  </header>
+  <div class="media-container" id="media-container">
+    <div class="media-tile"><div class="loader" style="display:none;"></div></div>
+    <div class="media-tile"><div class="loader" style="display:none;"></div></div>
+    <div class="media-tile"><div class="loader" style="display:none;"></div></div>
+  </div>
+  <button class="next-button" onclick="nextMedia()">Next Target</button>
+
+  <script>
+    const mediaData = [
+{ type: 'image', src: '/media/p1.jpg', quote: 'Om Sai Ram' },
+      { type: 'image', src: '/media/p2.jpg', quote: '' },
+      { type: 'image', src: '/media/p3.jpg', quote: '' },
+      { type: 'image', src: '/media/p4.jpg', quote: 'Baap hun main tumhara' },
+      { type: 'image', src: '/media/p5.jpg', quote: 'Ek ek ko dekh lunga' },
+      { type: 'image', src: '/media/p6.jpg', quote: '' },
+      { type: 'image', src: '/media/p7.jpg', quote: '' },
+      { type: 'image', src: '/media/p8.jpg', quote: '' },
+      { type: 'image', src: '/media/p9.jpg', quote: 'Yaar Anita ki gallan kardi ae' },
+      { type: 'image', src: '/media/p10.jpg', quote: '' },
+      { type: 'image', src: '/media/p11.jpg', quote: 'Isko yahin chod jaate hain' },
+      { type: 'image', src: '/media/p12.jpg', quote: 'My problem is now Robin\'s problem' },
+      { type: 'image', src: '/media/p13.jpg', quote: '' },
+      { type: 'image', src: '/media/p14.jpg', quote: 'Heena looking at SAREE, Papa looking at PRICE' },
+      { type: 'image', src: '/media/p15.jpg', quote: '70s Love' },
+      { type: 'image', src: '/media/p16.jpg', quote: '' },
+      { type: 'image', src: '/media/p17.jpg', quote: 'Dhaarmik Zindagi' },
+      { type: 'image', src: '/media/p18.jpg', quote: 'King of Sales & Marketing' },
+      { type: 'image', src: '/media/p19.jpg', quote: '' },
+      { type: 'image', src: '/media/p20.jpg', quote: '2 bouncer for protecting others from Heena' },
+      { type: 'image', src: '/media/p21.jpg', quote: 'Vaise toh mai sakhta hu par yaha mai pighal gaya' },
+      { type: 'image', src: '/media/p22.jpg', quote: 'Chote mote brands nahi use karte' },
+      { type: 'image', src: '/media/p23.jpg', quote: 'Looking at Heena eating 2 chocolates after making a new diet chart' },
+      { type: 'video', src: '/media/v1.mp4', quote: '' },
+      { type: 'video', src: '/media/v2.mp4', quote: '' },
+      { type: 'video', src: '/media/v3.mp4', quote: '' },
+      { type: 'video', src: '/media/v4.mp4', quote: '' },
+      { type: 'video', src: '/media/v5.mp4', quote: 'The name is Bond, James Bond' },
+      { type: 'video', src: '/media/v6.mp4', quote: '' },
+      { type: 'video', src: '/media/v7.mp4', quote: '' },
+      { type: 'video', src: '/media/v8.mp4', quote: '' },
+      { type: 'video', src: '/media/v9.mp4', quote: '' }
+    ];
+
+    let index = 0;
+    const tilesCount = 3;
+
+    const mediaContainer = document.getElementById('media-container');
+
+    function nextMedia() {
+      // Stop all videos to prevent audio overlap
+      const videos = mediaContainer.querySelectorAll('video');
+      videos.forEach(video => {
+        video.pause();
+        video.src = '';
+        video.currentTime = 0;
+      });
+
+      // Clear current media
+      mediaContainer.innerHTML = '';
+
+      // Load next set of media
+      for (let i = 0; i < tilesCount; i++) {
+        const dataIndex = (index + i) % mediaData.length;
+        const current = mediaData[dataIndex];
+        const tile = document.createElement('div');
+        tile.className = 'media-tile';
+        tile.innerHTML = '<div class="loader" style="display:block;"></div>';
+        mediaContainer.appendChild(tile);
+
+        if (current.type === 'image') {
+          const img = document.createElement('img');
+          img.src = current.src;
+          img.alt = 'Bond Image';
+          img.onload = () => {
+            tile.innerHTML = '';
+            tile.appendChild(img);
+            const quote = document.createElement('div');
+            quote.className = 'tile-quote';
+            quote.innerText = current.quote;
+            tile.appendChild(quote);
+          };
+        } else if (current.type === 'video') {
+          const video = document.createElement('video');
+          video.src = current.src;
+          video.autoplay = true;
+          video.muted = false;
+          video.playsinline = true;
+          video.load();
+          video.oncanplay = () => {
+            tile.innerHTML = '';
+            tile.appendChild(video);
+            const quote = document.createElement('div');
+            quote.className = 'tile-quote';
+            quote.innerText = current.quote;
+            tile.appendChild(quote);
+            video.play();
+          };
+        }
+      }
+
+      index = (index + tilesCount) % mediaData.length;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      nextMedia();
+    });
+
+    document.addEventListener('mousemove', e => {
+      const spark = document.createElement('div');
+      spark.className = 'spark';
+      document.body.appendChild(spark);
+      spark.style.left = `${e.pageX}px`;
+      spark.style.top = `${e.pageY}px`;
+      spark.style.background = `hsl(${Math.floor(Math.random()*360)}, 100%, 60%)`;
+      spark.style.setProperty('--drift-x', `${(Math.random() - 0.5) * 20}px`);
+      setTimeout(() => document.body.removeChild(spark), 1500);
+    });
+  </script>
+</body>
+</html>
