@@ -22,7 +22,7 @@
       justify-content: flex-start;
       min-height: 100vh;
       overflow-x: hidden;
-      padding-bottom: 40px; /* Added padding to ensure content doesn't touch bottom */
+      padding-bottom: 60px; /* Increased padding for larger content */
     }
 
     header {
@@ -32,54 +32,77 @@
 
     h1 {
       font-family: 'Playfair Display', serif;
-      font-size: 3rem;
+      font-size: 3.5rem; /* Slightly larger header for balance */
       font-style: italic;
       font-weight: 700;
     }
 
     .subheading {
-      font-size: 1rem;
+      font-size: 1.2rem;
       font-style: italic;
       color: #666;
       margin-top: 5px;
     }
 
     .media-container {
-      max-width: 90%;
-      max-height: 70vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Adjusted for larger tiles */
+      gap: 30px;
+      max-width: 95%;
+      margin: 30px auto;
+      justify-items: center;
+    }
+
+    .media-tile {
       position: relative;
+      max-width: 600px; /* Significantly larger tiles */
+      max-height: 450px; /* Increased to accommodate larger media and quote */
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      animation: float 4s ease-in-out infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fff;
     }
 
-    .media-container img, .media-container video {
-      max-width: 100%;
-      max-height: 70vh;
-      border-radius: 10px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    .media-tile img, .media-tile video {
+      width: 100%;
+      height: 400px; /* Larger media height */
+      object-fit: cover;
+      border-radius: 20px 20px 0 0;
     }
 
-    .quote {
-      margin: 20px auto 40px;
-      max-width: 700px;
-      font-size: 1.2rem;
+    .media-tile:hover {
+      transform: scale(1.05) translateY(-5px);
+    }
+
+    .tile-quote {
+      font-size: 1.1rem; /* Slightly larger font for readability */
       font-style: italic;
-      text-align: center;
       color: #444;
-      padding: 0 20px;
+      text-align: center;
+      padding: 15px;
+      width: 100%;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
     .next-button {
       background: black;
       color: white;
       border: none;
-      font-size: 1rem;
-      padding: 10px 20px;
+      font-size: 1.2rem; /* Slightly larger button text */
+      padding: 12px 24px;
       border-radius: 30px;
       cursor: pointer;
       transition: background 0.3s;
-      margin-bottom: 20px; /* Added margin to create space below button */
+      margin-bottom: 30px;
     }
 
     .next-button:hover {
@@ -87,18 +110,21 @@
     }
 
     .loader {
-      border: 6px solid #f3f3f3;
-      border-top: 6px solid #000;
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #000;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 50px;
+      height: 50px;
       animation: spin 1s linear infinite;
       position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
     .spark {
@@ -128,12 +154,11 @@
     <h1>James Bond</h1>
     <div class="subheading">a.k.a. Vijay Kataria</div>
   </header>
-  <div class="media-container">
-    <div class="loader" id="loader" style="display:none;"></div>
-    <img id="media" src="" alt="Bond Image" style="display:none;">
-    <video id="video" style="display:none;" autoplay muted playsinline></video>
+  <div class="media-container" id="media-container">
+    <div class="media-tile"><div class="loader" style="display:none;"></div></div>
+    <div class="media-tile"><div class="loader" style="display:none;"></div></div>
+    <div class="media-tile"><div class="loader" style="display:none;"></div></div>
   </div>
-  <div class="quote" id="quote"></div>
   <button class="next-button" onclick="nextMedia()">Next Target</button>
 
   <script>
@@ -141,75 +166,96 @@
       { type: 'image', src: '/media/p1.jpg', quote: 'Om Sai Ram' },
       { type: 'image', src: '/media/p2.jpg', quote: '' },
       { type: 'image', src: '/media/p3.jpg', quote: '' },
+        { type: 'video', src: '/media/v6.mp4', quote: '' },
       { type: 'image', src: '/media/p4.jpg', quote: 'Baap hun main tumhara' },
       { type: 'image', src: '/media/p5.jpg', quote: 'Ek ek ko dekh lunga' },
+      { type: 'video', src: '/media/v3.mp4', quote: '' },
       { type: 'image', src: '/media/p6.jpg', quote: '' },
       { type: 'image', src: '/media/p7.jpg', quote: '' },
-      { type: 'image', src: '/media/p8.jpg', quote: '' },
-      { type: 'image', src: '/media/p9.jpg', quote: 'Yaar Anita ki gallan kardi ae' },
+      { type: 'image', src: '/media/p21.jpg', quote: 'Vaise toh mai sakhta hu par yaha mai pighal gaya' },
+      { type: 'video', src: '/media/v7.mp4', quote: '' },
+      { type: 'image', src: '/media/p8.jpg', quote: 'Yaar Anita ki gallan kardi ae' },
+      { type: 'image', src: '/media/p9.jpg', quote: '' },
       { type: 'image', src: '/media/p10.jpg', quote: '' },
+      { type: 'video', src: '/media/v2.mp4', quote: '' },
       { type: 'image', src: '/media/p11.jpg', quote: 'Isko yahin chod jaate hain' },
       { type: 'image', src: '/media/p12.jpg', quote: 'My problem is now Robin\'s problem' },
       { type: 'image', src: '/media/p13.jpg', quote: '' },
+    { type: 'video', src: '/media/v8.mp4', quote: '' },
       { type: 'image', src: '/media/p14.jpg', quote: 'Heena looking at SAREE, Papa looking at PRICE' },
       { type: 'image', src: '/media/p15.jpg', quote: '70s Love' },
       { type: 'image', src: '/media/p16.jpg', quote: '' },
+      { type: 'video', src: '/media/v5.mp4', quote: 'The name is Bond, James Bond' },
       { type: 'image', src: '/media/p17.jpg', quote: 'Dhaarmik Zindagi' },
+      { type: 'video', src: '/media/v9.mp4', quote: '' },
       { type: 'image', src: '/media/p18.jpg', quote: 'King of Sales & Marketing' },
       { type: 'image', src: '/media/p19.jpg', quote: '' },
       { type: 'image', src: '/media/p20.jpg', quote: '2 bouncer for protecting others from Heena' },
-      { type: 'image', src: '/media/p21.jpg', quote: 'Vaise toh mai sakhta hu par yaha mai pighal gaya' },
       { type: 'image', src: '/media/p22.jpg', quote: 'Chote mote brands nahi use karte' },
       { type: 'image', src: '/media/p23.jpg', quote: 'Looking at Heena eating 2 chocolates after making a new diet chart' },
       { type: 'video', src: '/media/v1.mp4', quote: '' },
-      { type: 'video', src: '/media/v2.mp4', quote: '' },
-      { type: 'video', src: '/media/v3.mp4', quote: '' },
       { type: 'video', src: '/media/v4.mp4', quote: '' },
-      { type: 'video', src: '/media/v5.mp4', quote: 'The name is Bond, James Bond' },
-      { type: 'video', src: '/media/v6.mp4', quote: '' },
-      { type: 'video', src: '/media/v7.mp4', quote: '' },
-      { type: 'video', src: '/media/v8.mp4', quote: '' },
-      { type: 'video', src: '/media/v9.mp4', quote: '' }
     ];
 
-    let index = 0;
 
-    const mediaEl = document.getElementById('media');
-    const videoEl = document.getElementById('video');
-    const quoteEl = document.getElementById('quote');
-    const loader = document.getElementById('loader');
+    let index = 0;
+    const tilesCount = 3;
+
+    const mediaContainer = document.getElementById('media-container');
 
     function nextMedia() {
-      videoEl.pause();
-      videoEl.src = '';
-      videoEl.currentTime = 0;
+      // Stop all videos to prevent audio overlap
+      const videos = mediaContainer.querySelectorAll('video');
+      videos.forEach(video => {
+        video.pause();
+        video.src = '';
+        video.currentTime = 0;
+      });
 
-      loader.style.display = 'block';
-      mediaEl.style.display = 'none';
-      videoEl.style.display = 'none';
+      // Clear current media
+      mediaContainer.innerHTML = '';
 
-      const current = mediaData[index];
+      // Load next set of media
+      for (let i = 0; i < tilesCount; i++) {
+        const dataIndex = (index + i) % mediaData.length;
+        const current = mediaData[dataIndex];
+        const tile = document.createElement('div');
+        tile.className = 'media-tile';
+        tile.innerHTML = '<div class="loader" style="display:block;"></div>';
+        mediaContainer.appendChild(tile);
 
-      if (current.type === 'image') {
-        mediaEl.src = current.src;
-        mediaEl.onload = () => {
-          loader.style.display = 'none';
-          mediaEl.style.display = 'block';
-          quoteEl.innerText = current.quote;
-        };
-      } else if (current.type === 'video') {
-        videoEl.src = current.src;
-        videoEl.load();
-        videoEl.oncanplay = () => {
-          loader.style.display = 'none';
-          videoEl.style.display = 'block';
-          videoEl.muted = false;
-          videoEl.play();
-          quoteEl.innerText = current.quote;
-        };
+        if (current.type === 'image') {
+          const img = document.createElement('img');
+          img.src = current.src;
+          img.alt = 'Bond Image';
+          img.onload = () => {
+            tile.innerHTML = '';
+            tile.appendChild(img);
+            const quote = document.createElement('div');
+            quote.className = 'tile-quote';
+            quote.innerText = current.quote;
+            tile.appendChild(quote);
+          };
+        } else if (current.type === 'video') {
+          const video = document.createElement('video');
+          video.src = current.src;
+          video.autoplay = true;
+          video.muted = false;
+          video.playsinline = true;
+          video.load();
+          video.oncanplay = () => {
+            tile.innerHTML = '';
+            tile.appendChild(video);
+            const quote = document.createElement('div');
+            quote.className = 'tile-quote';
+            quote.innerText = current.quote;
+            tile.appendChild(quote);
+            video.play();
+          };
+        }
       }
 
-      index = (index + 1) % mediaData.length;
+      index = (index + tilesCount) % mediaData.length;
     }
 
     document.addEventListener('DOMContentLoaded', () => {
