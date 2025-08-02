@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>James Bond</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 40px; /* Added padding to ensure content doesn't touch bottom */
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px 10px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    .subheading {
+      font-size: 1rem;
+      font-style: italic;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .media-container {
+      max-width: 90%;
+      max-height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .media-container img, .media-container video {
+      max-width: 100%;
+      max-height: 70vh;
+      border-radius: 10px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    }
+
+    .quote {
+      margin: 20px auto 40px;
+      max-width: 700px;
+      font-size: 1.2rem;
+      font-style: italic;
+      text-align: center;
+      color: #444;
+      padding: 0 20px;
+    }
+
+    .next-button {
+      background: black;
+      color: white;
+      border: none;
+      font-size: 1rem;
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-bottom: 20px; /* Added margin to create space below button */
+    }
+
+    .next-button:hover {
+      background: #444;
+    }
+
+    .loader {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #000;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      position: absolute;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .spark {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      animation: fadeOut 1.5s ease-in-out forwards;
+    }
+
+    @keyframes fadeOut {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--drift-x), -20px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>James Bond</h1>
+    <div class="subheading">a.k.a. Vijay Kataria</div>
+  </header>
+  <div class="media-container">
+    <div class="loader" id="loader" style="display:none;"></div>
+    <img id="media" src="" alt="Bond Image" style="display:none;">
+    <video id="video" style="display:none;" autoplay muted playsinline></video>
+  </div>
+  <div class="quote" id="quote"></div>
+  <button class="next-button" onclick="nextMedia()">Next Target</button>
+
+  <script>
+    const mediaData = [
+      {
+        type: 'image',
+        src: 'https://images.pexels.com/photos/21193104/pexels-photo-21193104.jpeg',
+        quote: 'The world is not enough.'
+      },
+      {
+        type: 'image',
+        src: 'https://images.pexels.com/photos/884977/pexels-photo-884977.jpeg',
+        quote: 'Shaken, not stirred.'
+      },
+      {
+        type: 'image',
+        src: 'https://images.pexels.com/photos/40815/youth-active-jump-happy-40815.jpeg',
+        quote: 'No time to die.'
+      },
+      {
+        type: 'image',
+        src: 'https://images.pexels.com/photos/1117485/pexels-photo-1117485.jpeg',
+        quote: 'Bond. James Bond.'
+      },
+      {
+        type: 'video',
+        src: 'https://www.w3schools.com/html/mov_bbb.mp4',
+        quote: 'Mission briefing in progress.'
+      },
+    ];
+
+    let index = 0;
+
+    const mediaEl = document.getElementById('media');
+    const videoEl = document.getElementById('video');
+    const quoteEl = document.getElementById('quote');
+    const loader = document.getElementById('loader');
+
+    function nextMedia() {
+      videoEl.pause();
+      videoEl.src = '';
+      videoEl.currentTime = 0;
+
+      loader.style.display = 'block';
+      mediaEl.style.display = 'none';
+      videoEl.style.display = 'none';
+
+      const current = mediaData[index];
+
+      if (current.type === 'image') {
+        mediaEl.src = current.src;
+        mediaEl.onload = () => {
+          loader.style.display = 'none';
+          mediaEl.style.display = 'block';
+          quoteEl.innerText = current.quote;
+        };
+      } else if (current.type === 'video') {
+        videoEl.src = current.src;
+        videoEl.load();
+        videoEl.oncanplay = () => {
+          loader.style.display = 'none';
+          videoEl.style.display = 'block';
+          videoEl.muted = false;
+          videoEl.play();
+          quoteEl.innerText = current.quote;
+        };
+      }
+
+      index = (index + 1) % mediaData.length;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      nextMedia();
+    });
+
+    document.addEventListener('mousemove', e => {
+      const spark = document.createElement('div');
+      spark.className = 'spark';
+      document.body.appendChild(spark);
+      spark.style.left = `${e.pageX}px`;
+      spark.style.top = `${e.pageY}px`;
+      spark.style.background = `hsl(${Math.floor(Math.random()*360)}, 100%, 60%)`;
+      spark.style.setProperty('--drift-x', `${(Math.random() - 0.5) * 20}px`);
+      setTimeout(() => document.body.removeChild(spark), 1500);
+    });
+  </script>
+</body>
+</html>
